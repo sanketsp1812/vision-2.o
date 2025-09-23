@@ -35,6 +35,8 @@ A comprehensive web-based attendance management system with QR code functionalit
 
 ## 🛠️ Installation
 
+### Quick Setup (Recommended)
+
 1. **Clone the repository:**
    ```bash
    git clone <repository-url>
@@ -46,18 +48,32 @@ A comprehensive web-based attendance management system with QR code functionalit
    pip install -r requirements.txt
    ```
 
-3. **Initialize the database:**
+3. **Run setup script:**
    ```bash
-   python database.py
+   python setup.py
    ```
 
-4. **Run the application:**
+4. **Start the application:**
    ```bash
-   python app.py
+   python run.py
    ```
 
 5. **Access the application:**
    - Open your browser and go to `http://localhost:5000`
+
+### Manual Setup
+
+If you prefer manual setup:
+
+1. **Initialize database:**
+   ```bash
+   python database.py
+   ```
+
+2. **Run application:**
+   ```bash
+   python app.py
+   ```
 
 ## 📊 Database Schema
 
@@ -108,21 +124,46 @@ Students and teachers can register through the registration page with role-speci
 
 ```
 qr-attendance-system/
-├── app.py                 # Main Flask application
-├── database.py           # Database initialization
-├── requirements.txt      # Python dependencies
-├── templates/           # HTML templates
-│   ├── login.html
+├── app.py                    # Main Flask application
+├── database.py              # Database initialization and schema
+├── requirements.txt         # Python dependencies
+├── README.md               # Project documentation
+├── .gitignore              # Git ignore rules
+├── attendance.db           # SQLite database (auto-generated)
+│
+├── templates/              # Jinja2 HTML templates
+│   ├── login.html          # Login page
+│   ├── register.html       # Registration page
 │   ├── student_dashboard.html
 │   ├── teacher_dashboard.html
-│   ├── activity.html
-│   ├── certificate.html
-│   └── ...
-├── static/             # Static files (CSS, JS, images)
+│   ├── admin.html          # Admin dashboard
+│   ├── activity.html       # Student activity page
+│   ├── teacher_activity.html
+│   ├── certificate.html    # Certificate template
+│   ├── qr_scanner.html     # QR code scanner
+│   ├── qr_display.html     # QR code display
+│   ├── subjects.html       # Subject management
+│   ├── library.html        # Student library
+│   ├── teacher_library.html
+│   ├── analytics.html      # Analytics dashboard
+│   └── attendance_modal.html
+│
+├── static/                 # Static assets
 │   ├── css/
+│   │   ├── style.css       # Main stylesheet
+│   │   └── dashboard-styles.css
 │   └── js/
-└── uploads/           # File uploads directory
-    └── leave_documents/
+│       ├── student.js      # Student-specific JavaScript
+│       ├── teacher.js      # Teacher-specific JavaScript
+│       ├── admin.js        # Admin-specific JavaScript
+│       ├── activity.js     # Activity management
+│       ├── library.js      # Library functionality
+│       ├── dashboard-script.js
+│       └── subject_modals.js
+│
+└── uploads/                # File upload directory
+    ├── .gitkeep           # Keep directory in git
+    └── leave_documents/   # Leave application attachments
 ```
 
 ## 🎯 Usage Guide
@@ -217,14 +258,26 @@ Sheet 2: Teachers
 
 ## 🔧 Configuration
 
-### Environment Variables
-- `SECRET_KEY`: Flask secret key for session management
-- `MAX_CONTENT_LENGTH`: Maximum file upload size (default: 5MB)
+### Application Settings
+- **Secret Key**: Change `app.secret_key` in production
+- **File Upload**: Maximum 5MB file size limit
+- **Database**: SQLite with automatic initialization
+
+### Environment Setup
+```bash
+# Development
+export FLASK_ENV=development
+export FLASK_DEBUG=1
+
+# Production
+export FLASK_ENV=production
+export SECRET_KEY="your-production-secret-key"
+```
 
 ### Database Configuration
-- SQLite database file: `attendance.db`
-- Automatic table creation on first run
-- Row factory for dictionary-like access
+- **File**: `attendance.db` (SQLite)
+- **Auto-creation**: Tables created on first run
+- **Backup**: Regular database backups recommended
 
 ## 🚨 Troubleshooting
 
