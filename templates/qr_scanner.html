@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Scanner - Attendance</title>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .scanner-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #reader {
+            width: 100%;
+            margin: 20px 0;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .manual-entry {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .manual-entry input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .manual-entry button {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanner-container">
+        <h1>📱 QR Attendance Scanner</h1>
+        <p>Point your camera at the QR code provided by your teacher</p>
+        
+        <div id="reader"></div>
+        
+        <div id="result"></div>
+        
+        <div class="manual-entry">
+            <h3>Manual Entry</h3>
+            <input type="text" id="manualQR" placeholder="Enter QR code manually">
+            <button onclick="markAttendanceManual()">Mark Attendance</button>
+        </div>
+        
+        <a href="/" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+    <script>
+        const studentId = '{{ student_id or "001" }}';
+        let html5QrcodeScanner;
+
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`QR Code detected: ${decodedText}`);
+            
+            // Stop scanning
+            html5QrcodeScanner.clear();
+            
+            // Mark attendance
+            markAttendance(decodedText);
+        }
+
+        function onScanFailure(error) {
+            // Handle scan failure - usually not needed for user feedback
+        }
+
+        // Initialize scanner
+        html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader",
+            { 
+                fps: 10, 
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            },
+            false
+        );
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+        function markAttendance(qrCode) {
+            fetch('/mark_attendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    student_id: studentId,
+                    session_id: qrCode
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if (data.success) {
+                    resultDiv.innerHTML = '<div class="result success">✅ Attendance marked successfully!</div>';
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ ${data.message}</div>`;
+                    // Restart scanner after error
+                    setTimeout(() => {
+                        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = '<div class="result error">❌ Failed to mark attendance</div>';
+            });
+        }
+
+        function markAttendanceManual() {
+            const qrCode = document.getElementById('manualQR').value.trim();
+            if (!qrCode) {
+                alert('Please enter QR code');
+                return;
+            }
+            markAttendance(qrCode);
+        }
+    </script>
+</body>
+</html>

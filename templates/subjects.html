@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subjects - QR Attendance System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .subject-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .subject-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .subject-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .subject-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .subject-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .subject-code {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .subject-details {
+            margin-bottom: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .scan-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='/'">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-book"></i> My Subjects</h1>
+            <p>Your enrolled subjects for this semester</p>
+        </div>
+
+        <div class="subjects-grid">
+            {% for subject in subjects %}
+            <div class="subject-card" data-year="{{ subject.academic_year }}" data-division="{{ subject.division }}">
+                <div class="subject-header">
+                    <div class="subject-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <div class="subject-title">{{ subject.name }}</div>
+                        <div class="subject-code">{{ subject.code }}</div>
+                    </div>
+                </div>
+
+                <div class="subject-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Academic Year:</span>
+                        <span class="detail-value">{{ subject.academic_year }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Division:</span>
+                        <span class="detail-value">{{ subject.division }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Credits:</span>
+                        <span class="detail-value">{{ subject.credits }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Semester:</span>
+                        <span class="detail-value">{{ subject.semester }}</span>
+                    </div>
+                </div>
+
+                <button class="scan-btn" onclick="selectSubject({{ subject.id }}, '{{ subject.name }}')">
+                    <i class="fas fa-check"></i>
+                    Select Subject
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function selectSubject(subjectId, subjectName) {
+            sessionStorage.setItem('selectedSubject', subjectId);
+            sessionStorage.setItem('selectedSubjectName', subjectName);
+            alert('✅ Subject "' + subjectName + '" selected! You can now scan QR codes for this subject.');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

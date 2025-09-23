@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - QR Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="login-form">
+            <h2>Register</h2>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">Register as:</label>
+                    <select id="role" name="role" required onchange="toggleFields()">
+                        <option value="">Select Role</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="student_id_field" style="display: none;">
+                    <label for="student_id">Student ID:</label>
+                    <input type="text" id="student_id" name="student_id">
+                </div>
+                
+                <div class="form-group" id="teacher_id_field" style="display: none;">
+                    <label for="teacher_id">Teacher ID:</label>
+                    <input type="text" id="teacher_id" name="teacher_id">
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group" id="subject_field" style="display: none;">
+                    <label for="subject">Subject/Department:</label>
+                    <input type="text" id="subject" name="subject">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn">Register</button>
+            </form>
+            
+            <div class="links">
+                <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleFields() {
+            const role = document.getElementById('role').value;
+            const studentIdField = document.getElementById('student_id_field');
+            const teacherIdField = document.getElementById('teacher_id_field');
+            const subjectField = document.getElementById('subject_field');
+            const studentIdInput = document.getElementById('student_id');
+            const teacherIdInput = document.getElementById('teacher_id');
+            const subjectInput = document.getElementById('subject');
+            
+            if (role === 'student') {
+                studentIdField.style.display = 'block';
+                teacherIdField.style.display = 'none';
+                subjectField.style.display = 'none';
+                studentIdInput.required = true;
+                teacherIdInput.required = false;
+                subjectInput.required = false;
+            } else if (role === 'teacher') {
+                studentIdField.style.display = 'none';
+                teacherIdField.style.display = 'block';
+                subjectField.style.display = 'block';
+                studentIdInput.required = false;
+                teacherIdInput.required = true;
+                subjectInput.required = true;
+            } else {
+                studentIdField.style.display = 'none';
+                teacherIdField.style.display = 'none';
+                subjectField.style.display = 'none';
+                studentIdInput.required = false;
+                teacherIdInput.required = false;
+                subjectInput.required = false;
+            }
+        }
+    </script>
+</body>
+</html>

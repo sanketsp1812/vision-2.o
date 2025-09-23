@@ -1,0 +1,96 @@
+<!-- Attendance Modal -->
+<div class="modal-overlay" id="attendanceModal">
+    <div class="modal" style="max-width: 900px;">
+        <div class="modal-header">
+            <div class="modal-title">
+                <div class="modal-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h2>View Attendance</h2>
+            </div>
+            <button class="modal-close" onclick="closeAttendanceModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="attendance-controls">
+                <button class="btn btn-primary" onclick="downloadAttendanceCSV()">
+                    <i class="fas fa-download"></i>
+                    Download CSV
+                </button>
+                <input type="date" id="attendanceDate" class="form-input" style="width: auto; margin-left: 10px;">
+                <button class="btn btn-secondary" onclick="filterAttendance()">
+                    <i class="fas fa-filter"></i>
+                    Filter
+                </button>
+            </div>
+            <div id="attendanceList">
+                <div class="loading">Loading attendance...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Subject Leave Applications Modal -->
+<div class="modal-overlay" id="subjectLeaveModal">
+    <div class="modal" style="max-width: 800px;">
+        <div class="modal-header">
+            <div class="modal-title">
+                <div class="modal-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h2>Subject Leave Applications</h2>
+            </div>
+            <button class="modal-close" onclick="closeSubjectLeaveModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="subjectLeaveList">
+                <div class="loading">Loading applications...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.attendance-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.attendance-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+}
+
+.attendance-table tr:hover {
+    background: #f9fafb;
+}
+
+.status-present {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.status-absent {
+    color: #ef4444;
+    font-weight: 600;
+}
+</style>

@@ -1,0 +1,16 @@
+<!-- Replace the subject-actions section in your teacher_dashboard.html with this: -->
+
+<div class="subject-actions">
+    <button class="subject-btn qr" onclick="openQRModal('{{ subject.name }}', {{ subject.id }})">
+        <i class="fas fa-qrcode"></i>
+        Generate QR Code
+    </button>
+    <button class="subject-btn attendance" onclick="openAttendanceModal('{{ subject.name }}', {{ subject.id }})">
+        <i class="fas fa-eye"></i>
+        View Attendance
+    </button>
+    <button class="subject-btn leave" onclick="openSubjectLeaveModal('{{ subject.name }}', {{ subject.id }})">
+        <i class="fas fa-file-alt"></i>
+        Leave Applications
+    </button>
+</div>

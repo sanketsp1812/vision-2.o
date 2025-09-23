@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Attendance - Student Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-qrcode"></i>
+                    <div class="logo-text">
+                        <h1>QR Attendance</h1>
+                        <span>Student Portal</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="/" class="nav-item active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="/activity" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    Activity
+                </a>
+                <a href="/library" class="nav-item">
+                    <i class="fas fa-book"></i>
+                    Library
+                </a>
+                <a href="/logout" class="nav-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Notification Banners -->
+            <div class="notification-banner success">
+                <i class="fas fa-check-circle"></i>
+                <span>Registration successful! Please Login.</span>
+            </div>
+            
+            <div class="notification-banner info">
+                <i class="fas fa-info-circle"></i>
+                <span>Attendance saved for "30th November 2024" - data updated successfully!</span>
+            </div>
+
+            <!-- Teacher's Important Messages -->
+            <div class="teacher-messages-section">
+                <div class="messages-header">
+                    <div class="header-left">
+                        <i class="fas fa-bell"></i>
+                        <i class="fas fa-bullhorn"></i>
+                        <h2>Teacher's Important Messages</h2>
+                        <span class="subtitle">Latest updates from your instructors</span>
+                    </div>
+                    <div class="header-right">
+                        <button class="nav-btn" onclick="previousMessage()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="message-counter">7/8</span>
+                        <button class="nav-btn" onclick="nextMessage()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="message-card-container">
+                    <div class="message-card active">
+                        <div class="message-content">
+                            <div class="message-badge">
+                                <span class="badge notice">NOTICE</span>
+                            </div>
+                            <div class="message-text">
+                                <i class="fas fa-list"></i>
+                                <p>Poetry workshop this weekend - optional but highly recommended for extra credits.</p>
+                            </div>
+                            <div class="message-meta">
+                                <span class="time">4 days ago</span>
+                            </div>
+                        </div>
+                        <div class="message-author">
+                            <span>Info Prof. Maria Garcia • Literature</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-indicators">
+                    <span class="indicator active"></span>
+                    <span class="indicator"></span>
+                    <span class="indicator"></span>
+                    <span class="indicator"></span>
+                    <span class="indicator"></span>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Personal Information Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <i class="fas fa-user"></i>
+                        <h3>Personal Information</h3>
+                    </div>
+                    <div class="info-list">
+                        <div class="info-item">
+                            <i class="fas fa-user"></i>
+                            <span class="label">Full Name:</span>
+                            <span class="value">{{ student_name or 'Ritesh Kumar' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-id-card"></i>
+                            <span class="label">Registration No.:</span>
+                            <span class="value">{{ student_id or 'REG2024001' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar"></i>
+                            <span class="label">Academic Session:</span>
+                            <span class="value">2024-2025</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span class="label">Email Address:</span>
+                            <span class="value">{{ student_email or 'ritesh@university.edu' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-building"></i>
+                            <span class="label">Department:</span>
+                            <span class="value">Computer Science</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="label">Current Year:</span>
+                            <span class="value">3rd Year</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="actions-card">
+                    <div class="card-header">
+                        <i class="fas fa-bolt"></i>
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="actions-grid">
+                        <div class="action-btn browse-subjects">
+                            <i class="fas fa-book"></i>
+                            <div class="action-content">
+                                <h4>Browse Subjects</h4>
+                                <p>Explore available courses</p>
+                            </div>
+                        </div>
+                        <div class="action-btn view-attendance">
+                            <i class="fas fa-chart-line"></i>
+                            <div class="action-content">
+                                <h4>View Attendance</h4>
+                                <p>Check your attendance record</p>
+                            </div>
+                        </div>
+                        <div class="action-btn view-results">
+                            <i class="fas fa-star"></i>
+                            <div class="action-content">
+                                <h4>View Results</h4>
+                                <p>Check exam results & grades</p>
+                            </div>
+                        </div>
+                        <div class="action-btn leave-application" id="leaveAppBtn">
+                            <i class="fas fa-file-alt"></i>
+                            <div class="action-content">
+                                <h4>Leave Application</h4>
+                                <p>Submit leave requests</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Scanner Card -->
+                <div class="scanner-card">
+                    <div class="scanner-header">
+                        <span class="active-badge">ACTIVE SCANNER</span>
+                        <button class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="scanner-content">
+                        <h3>QR Scanner</h3>
+                        <p>Scan attendance QR codes quickly</p>
+                        
+                        <div class="scanner-area">
+                            <div class="scanner-frame">
+                                <div class="corner top-left"></div>
+                                <div class="corner top-right"></div>
+                                <div class="corner bottom-left"></div>
+                                <div class="corner bottom-right"></div>
+                                <div class="scanner-line"></div>
+                            </div>
+                        </div>
+                        
+                        <button class="scan-btn">
+                            <i class="fas fa-qrcode"></i>
+                            <div class="btn-content">
+                                <span class="btn-title">Scan QR Code</span>
+                                <span class="btn-subtitle">Quick attendance marking</span>
+                            </div>
+                        </button>
+                        
+                        <div class="scanner-info">
+                            <p><i class="fas fa-info-circle"></i> Click to activate camera scanner</p>
+                            <p><i class="fas fa-qrcode"></i> Scan QR code for instant attendance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Leave Application Modal -->
+    <div class="modal-overlay" id="leaveModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-alt"></i> Leave Application</h2>
+                <button class="modal-close" onclick="closeLeaveModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="successMessage" class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Leave application submitted successfully!</span>
+                </div>
+                <form id="leaveForm">
+                    <div class="form-group">
+                        <label for="leaveType">Leave Type *</label>
+                        <select id="leaveType" required>
+                            <option value="">Select Leave Type</option>
+                            <option value="sick">🤒 Sick Leave</option>
+                            <option value="personal">👤 Personal Leave</option>
+                            <option value="emergency">🚨 Emergency Leave</option>
+                            <option value="medical">🏥 Medical Leave</option>
+                            <option value="family">👨‍👩‍👧‍👦 Family Leave</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">Start Date *</label>
+                            <input type="date" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">End Date *</label>
+                            <input type="date" id="endDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">Reason for Leave *</label>
+                        <textarea id="reason" placeholder="Please provide a detailed reason for your leave request. Include any relevant information that will help in processing your application." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeLeaveModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" onclick="submitLeave()">
+                    <div class="loading-spinner"></div>
+                    <span class="btn-text">Submit Application</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s ease;
+        }
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+        .modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        .modal-body {
+            padding: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .modal-actions {
+            padding: 25px 30px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        .btn-secondary, .btn-primary {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+        }
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .success-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        .success-message.show {
+            display: flex;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .leave-application {
+            cursor: pointer !important;
+            text-decoration: none !important;
+        }
+        .leave-application * {
+            pointer-events: none;
+        }
+    </style>
+
+    <script>
+        function openLeaveModal() {
+            document.getElementById('leaveModal').classList.add('active');
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').min = today;
+            document.getElementById('endDate').min = today;
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('leaveAppBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openLeaveModal();
+            });
+        });
+        
+        function closeLeaveModal() {
+            document.getElementById('leaveModal').classList.remove('active');
+            document.getElementById('leaveForm').reset();
+        }
+        
+        function submitLeave() {
+            const leaveType = document.getElementById('leaveType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const reason = document.getElementById('reason').value;
+            
+            if (!leaveType || !startDate || !endDate || !reason) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            console.log('Submitting leave application...');
+            
+            fetch('/submit_leave', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    leaveType: leaveType,
+                    startDate: startDate,
+                    endDate: endDate,
+                    reason: reason
+                })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.success) {
+                    alert('Leave application submitted successfully!');
+                    closeLeaveModal();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to submit application: ' + error.message);
+            });
+        }
+        
+
+    </script>
+
+    <script src="{{ url_for('static', filename='js/student.js') }}"></script>
+</body>
+</html>

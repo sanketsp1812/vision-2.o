@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Library - QR Attendance</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .logo i {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            border-radius: 8px;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .container {
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .page-header p {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+        
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .library-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .library-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .library-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .library-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .icon-blue { background: #3742fa; }
+        .icon-green { background: #2ed573; }
+        .icon-orange { background: #ffa726; }
+        .icon-purple { background: #a55eea; }
+        .icon-red { background: #ff4757; }
+        .icon-teal { background: #26de81; }
+        
+        .library-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .library-desc {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .library-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .library-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .resource-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .resource-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-th"></i>
+            QR Attendance
+        </div>
+        
+        <nav class="nav">
+            <a href="/teacher_dashboard" class="nav-item">
+                <i class="fas fa-th"></i>
+                Dashboard
+            </a>
+            <a href="/library" class="nav-item active">
+                <i class="fas fa-book"></i>
+                Library
+            </a>
+            <a href="/activity" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                Activity
+            </a>
+        </nav>
+        
+        <div class="user-info">
+            <a href="/logout" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="page-header">
+            <h1>📚 Teacher Resource Library</h1>
+            <p>Access teaching materials, guides, and educational resources</p>
+        </div>
+        
+        <div class="library-grid">
+            <div class="library-card">
+                <div class="library-header">
+                    <div class="library-icon icon-blue">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="library-title">Teaching Guides</div>
+                </div>
+                <div class="library-desc">
+                    Comprehensive guides for effective classroom management and teaching methodologies.
+                </div>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <i class="fas fa-file-pdf"></i>
+                        Classroom Management Best Practices
+                    </div>
+                    <div class="resource-item">
+                        <i class="fas fa-file-pdf"></i>
+                        Student Engagement Strategies
+                    </div>
+                </div>
+                <button class="library-btn">Access Resources</button>
+            </div>
+            
+            <div class="library-card">
+                <div class="library-header">
+                    <div class="library-icon icon-green">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div class="library-title">Course Materials</div>
+                </div>
+                <div class="library-desc">
+                    Subject-specific materials, presentations, and curriculum resources for your courses.
+                </div>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <i class="fas fa-presentation"></i>
+                        Web Development Slides
+                    </div>
+                    <div class="resource-item">
+                        <i class="fas fa-code"></i>
+                        Programming Examples
+                    </div>
+                </div>
+                <button class="library-btn">View Materials</button>
+            </div>
+            
+            <div class="library-card">
+                <div class="library-header">
+                    <div class="library-icon icon-orange">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="library-title">Assessment Tools</div>
+                </div>
+                <div class="library-desc">
+                    Tools and templates for creating assessments, quizzes, and evaluation rubrics.
+                </div>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <i class="fas fa-clipboard-check"></i>
+                        Quiz Templates
+                    </div>
+                    <div class="resource-item">
+                        <i class="fas fa-star"></i>
+                        Grading Rubrics
+                    </div>
+                </div>
+                <button class="library-btn">Get Tools</button>
+            </div>
+            
+            <div class="library-card">
+                <div class="library-header">
+                    <div class="library-icon icon-purple">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="library-title">Video Resources</div>
+                </div>
+                <div class="library-desc">
+                    Educational videos, tutorials, and recorded lectures for enhanced learning.
+                </div>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <i class="fas fa-play-circle"></i>
+                        Programming Tutorials
+                    </div>
+                    <div class="resource-item">
+                        <i class="fas fa-video"></i>
+                        Recorded Lectures
+                    </div>
+                </div>
+                <button class="library-btn">Watch Videos</button>
+            </div>
+            
+            <div class="library-card">
+                <div class="library-header">
+                    <div class="library-icon icon-red">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="library-title">Student Resources</div>
+                </div>
+                <div class="library-desc">
+                    Resources to share with students including study guides and reference materials.
+                </div>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <i class="fas fa-book-open"></i>
+                        Study Guides
+                    </div>
+                    <div class="resource-item">
+                        <i class="fas fa-link"></i>
+                        Reference Links
+                    </div>
+                </div>
+                <button class="library-btn">Share Resources</button>
+            </div>
+            
+            <div class="library-card">
+                <div class="library-header">
+                    <div class="library-icon icon-teal">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="library-title">System Help</div>
+                </div>
+                <div class="library-desc">
+                    Documentation and help guides for using the QR Attendance system effectively.
+                </div>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <i class="fas fa-question-circle"></i>
+                        User Manual
+                    </div>
+                    <div class="resource-item">
+                        <i class="fas fa-life-ring"></i>
+                        Support Guide
+                    </div>
+                </div>
+                <button class="library-btn">Get Help</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

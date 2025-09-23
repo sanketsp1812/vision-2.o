@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library - Student Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-book"></i>
+                    <div class="logo-text">
+                        <h1>Campus Library</h1>
+                        <span>Read • Learn • Grow</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="/" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    Dashboard
+                </a>
+                <a href="/activity" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    Activities
+                </a>
+                <a href="/library" class="nav-item active">
+                    <i class="fas fa-book"></i>
+                    Library
+                </a>
+                <a href="/logout" class="nav-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="library-main">
+            <!-- Welcome Banner -->
+            <div class="library-welcome">
+                <div class="welcome-content">
+                    <h2>Welcome to the Campus Library</h2>
+                    <p>Find books, journals, and resources to power your learning journey. Manage your library card, track due dates, and explore recommendations.</p>
+                    <div class="welcome-actions">
+                        <button class="btn-browse">
+                            <i class="fas fa-search"></i>
+                            Browse Catalog
+                        </button>
+                        <button class="btn-card">
+                            <i class="fas fa-id-card"></i>
+                            My Library Card
+                        </button>
+                    </div>
+                </div>
+                <div class="welcome-books">
+                    <div class="book-stack">
+                        <div class="book-item"></div>
+                        <div class="book-item"></div>
+                        <div class="book-item"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Library Info Cards -->
+            <div class="library-cards">
+                <div class="info-card membership">
+                    <div class="card-header">
+                        <i class="fas fa-id-card"></i>
+                        <h3>Membership & Card</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="info-row">
+                            <span class="label">Card Number</span>
+                            <span class="value">LIB-2024-01928</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Issued On</span>
+                            <span class="value">01 Sep 2024</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Valid Till</span>
+                            <span class="value">31 Aug 2025</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Status</span>
+                            <span class="value status-active">Active</span>
+                        </div>
+                    </div>
+                    <button class="card-action">
+                        <i class="fas fa-cog"></i>
+                        Manage Card
+                    </button>
+                </div>
+
+                <div class="info-card timings">
+                    <div class="card-header">
+                        <i class="fas fa-clock"></i>
+                        <h3>Timings & Holidays</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="info-row">
+                            <span class="label">Weekdays</span>
+                            <span class="value">8:00 AM – 8:00 PM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Saturday</span>
+                            <span class="value">9:00 AM – 5:00 PM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Sunday</span>
+                            <span class="value">Closed</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Next Holiday</span>
+                            <span class="value">02 Oct (Gandhi Jayanti)</span>
+                        </div>
+                    </div>
+                    <button class="card-action">
+                        <i class="fas fa-bell"></i>
+                        Set Visit Reminder
+                    </button>
+                </div>
+
+                <div class="info-card rules">
+                    <div class="card-header">
+                        <i class="fas fa-info-circle"></i>
+                        <h3>Borrowing Rules</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="info-row">
+                            <span class="label">Max Books</span>
+                            <span class="value">4 at a time</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Loan Period</span>
+                            <span class="value">14 days</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Renewals</span>
+                            <span class="value">2 times</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Late Fee</span>
+                            <span class="value">₹5/day</span>
+                        </div>
+                    </div>
+                    <button class="card-action">
+                        <i class="fas fa-file-alt"></i>
+                        View Policy
+                    </button>
+                </div>
+            </div>
+
+            <!-- Library Services Section -->
+            <div class="library-services">
+                <div class="services-header">
+                    <h2>Library Services</h2>
+                    <p>Everything you need to make the most of our library</p>
+                </div>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <i class="fas fa-laptop"></i>
+                        <h3>Digital Library</h3>
+                        <p>Access e-books, journals, and research databases 24/7.</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Reading Rooms</h3>
+                        <p>Quiet, air-conditioned rooms for focused study.</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-headphones"></i>
+                        <h3>Audio Books</h3>
+                        <p>Explore curated collection of audiobooks by category.</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>Librarian Help</h3>
+                        <p>Get assistance for references and research queries.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browse by Category Section -->
+            <div class="browse-category">
+                <div class="category-header">
+                    <div class="header-left">
+                        <i class="fas fa-layer-group"></i>
+                        <h2>Browse by Category</h2>
+                        <p>Find books that match your interest</p>
+                    </div>
+                    <button class="view-catalogue-btn">
+                        <i class="fas fa-list"></i>
+                        View Full Catalogue
+                    </button>
+                </div>
+                
+                <div class="category-tags">
+                    <button class="category-tag active">Computer Science</button>
+                    <button class="category-tag">Mathematics</button>
+                    <button class="category-tag">Electronics</button>
+                    <button class="category-tag">Management</button>
+                    <button class="category-tag">Fiction</button>
+                    <button class="category-tag">Non-Fiction</button>
+                </div>
+                
+                <div class="category-books">
+                    <div class="category-book">
+                        <div class="book-cover-large blue"></div>
+                        <div class="book-details">
+                            <h3>Clean Code</h3>
+                            <p>Robert C. Martin</p>
+                            <span class="book-category">Programming</span>
+                        </div>
+                        <button class="reserve-btn">
+                            <i class="fas fa-bookmark"></i>
+                            Reserve
+                        </button>
+                    </div>
+                    <div class="category-book">
+                        <div class="book-cover-large green"></div>
+                        <div class="book-details">
+                            <h3>Linear Algebra Done Right</h3>
+                            <p>Sheldon Axler</p>
+                            <span class="book-category">Mathematics</span>
+                        </div>
+                        <button class="reserve-btn">
+                            <i class="fas fa-bookmark"></i>
+                            Reserve
+                        </button>
+                    </div>
+                    <div class="category-book">
+                        <div class="book-cover-large pink"></div>
+                        <div class="book-details">
+                            <h3>The Alchemist</h3>
+                            <p>Paulo Coelho</p>
+                            <span class="book-category">Fiction</span>
+                        </div>
+                        <button class="reserve-btn">
+                            <i class="fas fa-bookmark"></i>
+                            Reserve
+                        </button>
+                    </div>
+                    <div class="category-book">
+                        <div class="book-cover-large orange"></div>
+                        <div class="book-details">
+                            <h3>Zero to One</h3>
+                            <p>Peter Thiel</p>
+                            <span class="book-category">Management</span>
+                        </div>
+                        <button class="reserve-btn">
+                            <i class="fas fa-bookmark"></i>
+                            Reserve
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Library Notices Section -->
+            <div class="library-notices">
+                <div class="notices-header">
+                    <div class="header-left">
+                        <i class="fas fa-bullhorn"></i>
+                        <h2>Library Notices</h2>
+                        <p>Updates and important information</p>
+                    </div>
+                    <button class="subscribe-btn">
+                        <i class="fas fa-bell"></i>
+                        Subscribe
+                    </button>
+                </div>
+                
+                <div class="notices-list">
+                    <div class="notice-item">
+                        <div class="notice-icon orange"></div>
+                        <p>Books issued after 20th Dec will be due on 5th Jan.</p>
+                    </div>
+                    <div class="notice-item">
+                        <div class="notice-icon blue"></div>
+                        <p>New arrivals: AI, Data Science, and Cloud Computing.</p>
+                    </div>
+                    <div class="notice-item">
+                        <div class="notice-icon green"></div>
+                        <p>Reading room timings extended till 10 PM during exams.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQs and Contact Section -->
+            <div class="footer-sections">
+                <div class="faqs-section">
+                    <h2>FAQs</h2>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>How to apply for a new library card?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>How to renew books online?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What if I lose my card?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-section">
+                    <h2>Contact</h2>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Central Library, A-Block, Campus</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>library@university.edu</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+91 98765 43210</span>
+                        </div>
+                    </div>
+                    <button class="ask-librarian-btn">
+                        <i class="fas fa-comments"></i>
+                        Ask Librarian
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/library.js') }}"></script>
+</body>
+</html>

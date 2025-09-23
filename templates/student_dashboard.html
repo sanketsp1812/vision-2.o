@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - QR Attendance System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-styles.css') }}">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="navbar-brand">
+            <div class="navbar-logo">⬜</div>
+            <div class="navbar-title">
+                <h2>QR Attendance</h2>
+                <span>Student Portal</span>
+            </div>
+        </div>
+        <div class="navbar-menu">
+            <a href="#" class="navbar-btn active">👤 Dashboard</a>
+            <a href="/activity" class="navbar-btn">📅 Activity</a>
+            <a href="/library" class="navbar-btn">📚 Library</a>
+            <a href="/logout" class="navbar-btn logout">🚪 Logout</a>
+        </div>
+    </nav>
+
+
+    <!-- Notifications Section -->
+    <div class="notifications-section">
+        <div class="notification success" id="loginNotification">
+            ✅ Login successful!
+        </div>
+        <div class="notification info" id="attendanceNotification" style="display: none;">
+            ℹ️ Attendance saved for "<span id="attendanceDate"></span>" - data updated successfully!
+        </div>
+    </div>
+
+    <!-- Teacher Messages Section -->
+    <div class="messages-section">
+        <div class="messages-header">
+            <div class="messages-title">
+                <span class="messages-icon">🔔 📢</span>
+                <h3>Teacher's Important Messages</h3>
+                <span class="messages-subtitle">Latest updates from your instructors</span>
+            </div>
+            <div class="messages-nav">
+                <span>7/8</span>
+                <button class="nav-arrow">‹</button>
+                <button class="nav-arrow">›</button>
+            </div>
+        </div>
+        <div class="message-card">
+            <div class="message-badge">NOTICE</div>
+            <div class="message-content">
+                <div class="message-text">
+                    📋 Poetry workshop this weekend - optional but highly recommended for extra credits.
+                </div>
+                <div class="message-meta">
+                    <span class="message-time">4 days ago</span>
+                    <span class="message-author">Info Prof. Maria Garcia • Literature</span>
+                </div>
+            </div>
+        </div>
+        <div class="message-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+        <!-- Dashboard Tab Content -->
+        <div class="tab-content active" id="dashboard-content">
+            <div class="dashboard-layout">
+                <!-- Left Panel - Student Info + Quick Actions -->
+                <div class="left-panel">
+                    <!-- Personal Information Card -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <i class="fas fa-user"></i>
+                            <h3>Personal Information</h3>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <div class="info-content">
+                                    <span class="info-label">Full Name</span>
+                                    <span class="info-value">{{ student_name or 'Ritesh Kumar' }}</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-book"></i>
+                                <div class="info-content">
+                                    <span class="info-label">Registration No.</span>
+                                    <span class="info-value">{{ student_id or 'REG2024001' }}</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-calendar"></i>
+                                <div class="info-content">
+                                    <span class="info-label">Academic Session</span>
+                                    <span class="info-value">2024-2025</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-star"></i>
+                                <div class="info-content">
+                                    <span class="info-label">Email Address</span>
+                                    <span class="info-value">{{ student_email or 'ritesh@university.edu' }}</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-file-alt"></i>
+                                <div class="info-content">
+                                    <span class="info-label">Department</span>
+                                    <span class="info-value">Computer Science</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-bolt"></i>
+                                <div class="info-content">
+                                    <span class="info-label">Current Year</span>
+                                    <span class="info-value">3rd Year</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions Card -->
+                    <div class="actions-card">
+                        <div class="card-header">
+                            <i class="fas fa-bolt"></i>
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="actions-grid">
+                            <div class="action-item browse-subjects" data-action="browse" tabindex="0" onclick="openSubjectsModal()" style="cursor: pointer;">
+                                <i class="fas fa-book-open"></i>
+                                <div class="action-content">
+                                    <h4>Browse Subjects</h4>
+                                    <p>Explore available courses</p>
+                                </div>
+                            </div>
+                            <div class="action-item view-attendance" data-action="attendance" tabindex="0" onclick="openAttendanceModal()">
+                                <i class="fas fa-chart-line"></i>
+                                <div class="action-content">
+                                    <h4>View Attendance</h4>
+                                    <p>Check your attendance record</p>
+                                </div>
+                            </div>
+                            <div class="action-item view-results" data-action="results" tabindex="0" onclick="openResultsModal()">
+                                <i class="fas fa-star"></i>
+                                <div class="action-content">
+                                    <h4>View Results</h4>
+                                    <p>Check exam results & grades</p>
+                                </div>
+                            </div>
+                            <div class="action-item leave-application" data-action="leave" tabindex="0" onclick="openLeaveModal()">
+                                <i class="fas fa-file-alt"></i>
+                                <div class="action-content">
+                                    <h4>Leave Application</h4>
+                                    <p>Submit leave requests</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel - QR Scanner -->
+                <div class="right-panel">
+                    <div class="qr-scanner-card">
+                        <div class="scanner-header">
+                            <span class="active-badge">Active Scanner</span>
+                        </div>
+                        <div class="scanner-content">
+                            <h3>QR Scanner</h3>
+                            <p>Scan attendance QR codes quickly</p>
+                            
+                            <div class="qr-display">
+                                <div class="camera-frame">
+                                    <div class="scan-line"></div>
+                                    <div class="corner top-left"></div>
+                                    <div class="corner top-right"></div>
+                                    <div class="corner bottom-left"></div>
+                                    <div class="corner bottom-right"></div>
+                                </div>
+                            </div>
+                            
+                            <button class="scan-btn" onclick="openQRScanner()">
+                                <i class="fas fa-qrcode"></i>
+                                Scan QR Code
+                                <span>Quick attendance marking</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- QR Scanner Modal -->
+    <div class="modal-overlay" id="qrScannerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-qrcode"></i> QR Scanner</h2>
+                <button class="modal-close" onclick="closeQRScanner()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="qr-reader" style="width: 100%; margin: 20px 0;"></div>
+                <div id="qr-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance View Modal -->
+    <div class="modal-overlay" id="attendanceModal">
+        <div class="modal" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-chart-line"></i> My Attendance Record</h2>
+                <button class="modal-close" onclick="closeAttendanceModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="attendance-filters" style="margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Subject:</label>
+                        <select id="subjectFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">All Subjects</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Data Structures">Data Structures</option>
+                            <option value="Database Management">Database Management</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Date From:</label>
+                        <input type="date" id="dateFrom" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Date To:</label>
+                        <input type="date" id="dateTo" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div style="align-self: end;">
+                        <button onclick="filterAttendance()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;"><i class="fas fa-filter"></i> Filter</button>
+                        <button onclick="clearFilters()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 5px;"><i class="fas fa-times"></i> Clear</button>
+                        <button onclick="downloadAttendanceCSV()" style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 5px;"><i class="fas fa-file-csv"></i> Download CSV</button>
+                    </div>
+                </div>
+                
+                <div class="attendance-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0; color: #28a745;">Total Present</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 5px 0; color: #28a745;" id="totalPresent">0</p>
+                    </div>
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0; color: #856404;">Total Classes</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 5px 0; color: #856404;" id="totalClasses">0</p>
+                    </div>
+                    <div style="background: #d1ecf1; padding: 15px; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0; color: #0c5460;">Attendance %</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 5px 0; color: #0c5460;" id="attendancePercent">0%</p>
+                    </div>
+                </div>
+                
+                <div class="attendance-table" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Date</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Subject</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Subject Code</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Time</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Status</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Session ID</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <tr>
+                                <td colspan="6" style="padding: 20px; text-align: center; color: #6c757d;">Loading attendance records...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div class="modal-overlay" id="resultsModal">
+        <div class="modal" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-star"></i> My Results</h2>
+                <button class="modal-close" onclick="closeResultsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="results-filters" style="margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Exam Type:</label>
+                        <select id="examFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">All Exams</option>
+                            <option value="Mid Term">Mid Term</option>
+                            <option value="Final">Final Exam</option>
+                            <option value="Assignment">Assignment</option>
+                            <option value="Quiz">Quiz</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Subject:</label>
+                        <select id="resultSubjectFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">All Subjects</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Data Structures">Data Structures</option>
+                            <option value="Database Management">Database Management</option>
+                        </select>
+                    </div>
+                    <div style="align-self: end;">
+                        <button onclick="filterResults()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;"><i class="fas fa-filter"></i> Filter</button>
+                        <button onclick="downloadResultsPDF()" style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 5px;"><i class="fas fa-download"></i> Download PDF</button>
+                    </div>
+                </div>
+                
+                <div class="results-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0; color: #28a745;">Overall GPA</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 5px 0; color: #28a745;" id="overallGPA">8.5</p>
+                    </div>
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0; color: #856404;">Total Subjects</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 5px 0; color: #856404;" id="totalSubjects">6</p>
+                    </div>
+                    <div style="background: #d1ecf1; padding: 15px; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0; color: #0c5460;">Passed</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 5px 0; color: #0c5460;" id="passedSubjects">6</p>
+                    </div>
+                </div>
+                
+                <div class="results-table" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Subject</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Exam Type</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Date</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Marks</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Grade</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Status</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <tr>
+                                <td colspan="7" style="padding: 20px; text-align: center; color: #6c757d;">Loading results...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subjects Modal -->
+    <div class="modal-overlay" id="subjectsModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-book"></i> My Subjects</h2>
+                <button class="modal-close" onclick="closeSubjectsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="subjectsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave Application Modal -->
+    <div class="modal-overlay" id="leaveModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-alt"></i> Leave Application</h2>
+                <button class="modal-close" onclick="closeLeaveModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="leaveForm">
+                    <div class="form-group">
+                        <label for="leaveType">Leave Type *</label>
+                        <select id="leaveType" required>
+                            <option value="">Select Leave Type</option>
+                            <option value="sick">Sick Leave</option>
+                            <option value="personal">Personal Leave</option>
+                            <option value="emergency">Emergency Leave</option>
+                            <option value="medical">Medical Leave</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">Start Date *</label>
+                            <input type="date" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">End Date *</label>
+                            <input type="date" id="endDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">Reason *</label>
+                        <textarea id="reason" placeholder="Please provide detailed reason for leave" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="attachment">Attach Document (Optional)</label>
+                        <input type="file" id="attachment" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" class="file-input">
+                        <div class="file-info">Supported: PDF, Images, Word documents (Max 5MB)</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeLeaveModal()">Cancel</button>
+                <button type="button" class="btn-primary" onclick="submitLeave()">Submit Application</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openLeaveModal() {
+            document.getElementById('leaveModal').classList.add('active');
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').min = today;
+            document.getElementById('endDate').min = today;
+        }
+        
+        function closeLeaveModal() {
+            document.getElementById('leaveModal').classList.remove('active');
+            document.getElementById('leaveForm').reset();
+        }
+        
+        function submitLeave() {
+            const leaveType = document.getElementById('leaveType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const reason = document.getElementById('reason').value;
+            const attachment = document.getElementById('attachment').files[0];
+            
+            if (!leaveType || !startDate || !endDate || !reason) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('leaveType', leaveType);
+            formData.append('startDate', startDate);
+            formData.append('endDate', endDate);
+            formData.append('reason', reason);
+            if (attachment) {
+                formData.append('attachment', attachment);
+            }
+            
+            fetch('/submit_leave', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ Leave application submitted successfully!');
+                    closeLeaveModal();
+                } else {
+                    alert('❌ Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('❌ Failed to submit application');
+            });
+        }
+    </script>
+
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .modal-body {
+            padding: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .modal-actions {
+            padding: 25px 30px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        .btn-secondary, .btn-primary {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .file-input {
+            border: 2px dashed #e1e5e9 !important;
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+        .file-info {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        /* Top Navigation Styles */
+        .top-navbar {
+            background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .navbar-logo {
+            font-size: 24px;
+        }
+        .navbar-title h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .navbar-title span {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .navbar-menu {
+            display: flex;
+            gap: 10px;
+        }
+        .navbar-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .navbar-btn.active {
+            background: rgba(255,255,255,0.2);
+        }
+        .top-nav {
+            background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .nav-logo {
+            font-size: 24px;
+        }
+        .nav-title h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .nav-title span {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .nav-menu {
+            display: flex;
+            gap: 10px;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .nav-btn.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Notifications Section */
+        .notifications-section {
+            padding: 20px 30px;
+            background: #f8fafc;
+        }
+        .notification {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .notification.success {
+            background: #10B981;
+            color: white;
+        }
+        .notification.info {
+            background: #3B82F6;
+            color: white;
+        }
+        
+        /* Teacher Messages Section */
+        .messages-section {
+            background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+            margin: 20px 30px;
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+        }
+        .messages-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .messages-title h3 {
+            margin: 5px 0;
+            font-size: 24px;
+        }
+        .messages-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .messages-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-arrow {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .message-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .message-badge {
+            background: #3B82F6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .message-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .message-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .message-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+        }
+        .dot.active {
+            background: white;
+        }
+    </style>
+
+    <script>
+        // Auto-hide login notification after 3 seconds
+        setTimeout(() => {
+            const notification = document.getElementById('loginNotification');
+            if (notification) {
+                notification.style.display = 'none';
+            }
+        }, 3000);
+        
+
+        
+        function markAttendanceManual() {
+            const qrCode = document.getElementById('qrInput').value.trim();
+            if (!qrCode) {
+                alert('Please enter QR code');
+                return;
+            }
+            
+            const studentId = '{{ student_id or "001" }}';
+            
+            fetch('/mark_attendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    student_id: studentId,
+                    session_id: qrCode
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ Attendance marked successfully!');
+                    document.getElementById('qrInput').value = '';
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('❌ Failed to mark attendance');
+            });
+        }
+    </script>
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script>
+        let html5QrcodeScanner;
+        
+        function openQRScanner() {
+            const selectedSubject = sessionStorage.getItem('selectedSubject');
+            if (!selectedSubject) {
+                alert('Please browse and select a subject first!');
+                return;
+            }
+            document.getElementById('qrScannerModal').classList.add('active');
+            
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "qr-reader",
+                { 
+                    fps: 10, 
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0,
+                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+                },
+                false
+            );
+            
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        }
+        
+        function closeQRScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+            document.getElementById('qrScannerModal').classList.remove('active');
+        }
+        
+        function onScanSuccess(decodedText, decodedResult) {
+            html5QrcodeScanner.clear();
+            
+            const studentId = '{{ student_id or "001" }}';
+            
+            fetch('/mark_attendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    student_id: studentId,
+                    session_id: decodedText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update attendance notification with current date
+                    const today = new Date();
+                    const dateStr = today.toLocaleDateString('en-GB', { 
+                        day: 'numeric', 
+                        month: 'long', 
+                        year: 'numeric' 
+                    });
+                    document.getElementById('attendanceDate').textContent = dateStr;
+                    document.getElementById('attendanceNotification').style.display = 'block';
+                    
+                    alert('✅ Attendance marked successfully!');
+                    closeQRScanner();
+                } else {
+                    alert('❌ ' + data.message);
+                    closeQRScanner();
+                }
+            })
+            .catch(error => {
+                alert('❌ Failed to mark attendance');
+                closeQRScanner();
+            });
+        }
+        
+        function onScanFailure(error) {
+            // Handle scan failure silently
+        }
+        
+        function openAttendanceModal() {
+            document.getElementById('attendanceModal').classList.add('active');
+            loadAttendanceData();
+        }
+        
+        function closeAttendanceModal() {
+            document.getElementById('attendanceModal').classList.remove('active');
+        }
+        
+        function loadAttendanceData() {
+            const attendanceData = [
+                {
+                    date: '2024-12-01',
+                    subject: 'Web Development',
+                    subjectCode: 'WD101',
+                    time: '09:30 AM',
+                    status: 'Present',
+                    sessionId: 'attendance_20241201_093000'
+                },
+                {
+                    date: '2024-11-30',
+                    subject: 'Data Structures',
+                    subjectCode: 'DS201',
+                    time: '11:00 AM',
+                    status: 'Present',
+                    sessionId: 'attendance_20241130_110000'
+                },
+                {
+                    date: '2024-11-29',
+                    subject: 'Database Management',
+                    subjectCode: 'DB301',
+                    time: '02:30 PM',
+                    status: 'Present',
+                    sessionId: 'attendance_20241129_143000'
+                }
+            ];
+            
+            displayAttendanceData(attendanceData);
+            updateAttendanceSummary(attendanceData);
+        }
+        
+        function displayAttendanceData(data) {
+            const tbody = document.getElementById('attendanceTableBody');
+            
+            let html = '';
+            data.forEach(record => {
+                const statusColor = record.status === 'Present' ? '#28a745' : '#dc3545';
+                const statusIcon = record.status === 'Present' ? '✅' : '❌';
+                
+                html += `
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #dee2e6;">${new Date(record.date).toLocaleDateString('en-GB')}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6;">${record.subject}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6;">${record.subjectCode}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6;">${record.time}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6; color: ${statusColor}; font-weight: bold;">${statusIcon} ${record.status}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6; font-family: monospace; font-size: 12px;">${record.sessionId}</td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        function updateAttendanceSummary(data) {
+            const totalPresent = data.filter(record => record.status === 'Present').length;
+            const totalClasses = data.length;
+            const attendancePercent = totalClasses > 0 ? Math.round((totalPresent / totalClasses) * 100) : 0;
+            
+            document.getElementById('totalPresent').textContent = totalPresent;
+            document.getElementById('totalClasses').textContent = totalClasses;
+            document.getElementById('attendancePercent').textContent = attendancePercent + '%';
+        }
+        
+        function filterAttendance() {
+            loadAttendanceData();
+        }
+        
+        function clearFilters() {
+            document.getElementById('subjectFilter').value = '';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            loadAttendanceData();
+        }
+        
+        function downloadAttendanceCSV() {
+            const attendanceData = [
+                {
+                    date: '2024-12-01',
+                    subject: 'Web Development',
+                    subjectCode: 'WD101',
+                    time: '09:30 AM',
+                    status: 'Present',
+                    sessionId: 'attendance_20241201_093000'
+                },
+                {
+                    date: '2024-11-30',
+                    subject: 'Data Structures',
+                    subjectCode: 'DS201',
+                    time: '11:00 AM',
+                    status: 'Present',
+                    sessionId: 'attendance_20241130_110000'
+                },
+                {
+                    date: '2024-11-29',
+                    subject: 'Database Management',
+                    subjectCode: 'DB301',
+                    time: '02:30 PM',
+                    status: 'Present',
+                    sessionId: 'attendance_20241129_143000'
+                }
+            ];
+            
+            // Create CSV content
+            let csvContent = 'Date,Subject,Subject Code,Time,Status,Session ID\n';
+            
+            attendanceData.forEach(record => {
+                const row = [
+                    new Date(record.date).toLocaleDateString('en-GB'),
+                    record.subject,
+                    record.subjectCode,
+                    record.time,
+                    record.status,
+                    record.sessionId
+                ].join(',');
+                csvContent += row + '\n';
+            });
+            
+            // Create and download CSV file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const studentId = '{{ student_id or "REG2024001" }}';
+            const today = new Date().toISOString().split('T')[0];
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Attendance_${studentId}_${today}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert('📈 Attendance CSV downloaded successfully!');
+        }
+        
+        function openResultsModal() {
+            document.getElementById('resultsModal').classList.add('active');
+            loadResultsData();
+        }
+        
+        function closeResultsModal() {
+            document.getElementById('resultsModal').classList.remove('active');
+        }
+        
+        function loadResultsData() {
+            const resultsData = [
+                {
+                    subject: 'Web Development',
+                    examType: 'Mid Term',
+                    date: '2024-11-15',
+                    marks: '85/100',
+                    grade: 'A',
+                    status: 'Pass',
+                    resultId: 'WD_MT_2024_001'
+                },
+                {
+                    subject: 'Data Structures',
+                    examType: 'Final',
+                    date: '2024-11-20',
+                    marks: '92/100',
+                    grade: 'A+',
+                    status: 'Pass',
+                    resultId: 'DS_F_2024_001'
+                },
+                {
+                    subject: 'Database Management',
+                    examType: 'Assignment',
+                    date: '2024-11-25',
+                    marks: '78/100',
+                    grade: 'B+',
+                    status: 'Pass',
+                    resultId: 'DB_A_2024_001'
+                },
+                {
+                    subject: 'Web Development',
+                    examType: 'Quiz',
+                    date: '2024-11-28',
+                    marks: '88/100',
+                    grade: 'A',
+                    status: 'Pass',
+                    resultId: 'WD_Q_2024_001'
+                }
+            ];
+            
+            displayResultsData(resultsData);
+        }
+        
+        function displayResultsData(data) {
+            const tbody = document.getElementById('resultsTableBody');
+            
+            let html = '';
+            data.forEach(record => {
+                const statusColor = record.status === 'Pass' ? '#28a745' : '#dc3545';
+                const gradeColor = record.grade.includes('A') ? '#28a745' : record.grade.includes('B') ? '#ffc107' : '#dc3545';
+                
+                html += `
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #dee2e6; font-weight: 600;">${record.subject}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6;">${record.examType}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6;">${new Date(record.date).toLocaleDateString('en-GB')}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6; font-weight: bold;">${record.marks}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6; color: ${gradeColor}; font-weight: bold; font-size: 16px;">${record.grade}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6; color: ${statusColor}; font-weight: bold;">${record.status}</td>
+                        <td style="padding: 12px; border: 1px solid #dee2e6;">
+                            <button onclick="downloadSingleResult('${record.resultId}')" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                                <i class="fas fa-download"></i> PDF
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        function filterResults() {
+            loadResultsData();
+        }
+        
+        function downloadResultsPDF() {
+            // Generate comprehensive results PDF
+            const studentName = '{{ student_name or "Ritesh Kumar" }}';
+            const studentId = '{{ student_id or "REG2024001" }}';
+            
+            alert('📄 Downloading complete results PDF for ' + studentName + ' (' + studentId + ')');
+            
+            // Simulate PDF download
+            const link = document.createElement('a');
+            link.href = '#';
+            link.download = `Results_${studentId}_Complete.pdf`;
+            link.click();
+        }
+        
+        function downloadSingleResult(resultId) {
+            alert('📄 Downloading result: ' + resultId + '.pdf');
+            
+            // Simulate single result PDF download
+            const link = document.createElement('a');
+            link.href = '#';
+            link.download = `Result_${resultId}.pdf`;
+            link.click();
+        }
+        
+        function openSubjectsModal() {
+            document.getElementById('subjectsModal').classList.add('active');
+            loadSubjects();
+        }
+        
+        function closeSubjectsModal() {
+            document.getElementById('subjectsModal').classList.remove('active');
+        }
+        
+        function loadSubjects() {
+            fetch('/get_student_subjects')
+            .then(response => response.json())
+            .then(data => {
+                const grid = document.getElementById('subjectsGrid');
+                let html = '';
+                
+                data.forEach(subject => {
+                    html += `
+                        <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; border: 2px solid #e9ecef; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='#e9ecef'">
+                            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                    <i class="fas fa-graduation-cap" style="color: white; font-size: 20px;"></i>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0; color: #333;">${subject.name}</h4>
+                                    <p style="margin: 0; color: #666; font-size: 14px;">${subject.code}</p>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 15px; font-size: 14px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span style="color: #666;">Year:</span>
+                                    <span style="color: #333; font-weight: 600;">${subject.academic_year}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span style="color: #666;">Division:</span>
+                                    <span style="color: #333; font-weight: 600;">${subject.division}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #666;">Credits:</span>
+                                    <span style="color: #333; font-weight: 600;">${subject.credits}</span>
+                                </div>
+                            </div>
+                            <button onclick="selectSubjectFromModal(${subject.id}, '${subject.name}')" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                <i class="fas fa-check"></i> Select Subject
+                            </button>
+                        </div>
+                    `;
+                });
+                
+                grid.innerHTML = html;
+            });
+        }
+        
+        function selectSubjectFromModal(subjectId, subjectName) {
+            sessionStorage.setItem('selectedSubject', subjectId);
+            sessionStorage.setItem('selectedSubjectName', subjectName);
+            closeSubjectsModal();
+            alert('✅ Subject "' + subjectName + '" selected! You can now scan QR codes for this subject.');
+        }
+    </script>
+    <script src="{{ url_for('static', filename='js/dashboard-script.js') }}"></script>
+</body>
+</html>

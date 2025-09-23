@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - QR Attendance System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-user-shield"></i>
+                    <div class="logo-text">
+                        <h1>QR Attendance</h1>
+                        <span>Admin Portal</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="/admin" class="nav-item active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="/activity" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    Activity
+                </a>
+                <a href="/library" class="nav-item">
+                    <i class="fas fa-book"></i>
+                    Library
+                </a>
+                <a href="/logout" class="nav-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Notification Banners -->
+            <div class="notification-banner info">
+                <i class="fas fa-info-circle"></i>
+                <span>System running smoothly - All services operational!</span>
+            </div>
+
+            <!-- Admin Messages -->
+            <div class="teacher-messages-section">
+                <div class="messages-header">
+                    <div class="header-left">
+                        <i class="fas fa-shield-alt"></i>
+                        <i class="fas fa-bullhorn"></i>
+                        <h2>System Notifications</h2>
+                        <span class="subtitle">Important system updates and alerts</span>
+                    </div>
+                    <div class="header-right">
+                        <button class="nav-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="message-counter">1/2</span>
+                        <button class="nav-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="message-card-container">
+                    <div class="message-card active">
+                        <div class="message-content">
+                            <div class="message-badge">
+                                <span class="badge notice">SYSTEM</span>
+                            </div>
+                            <div class="message-text">
+                                <i class="fas fa-database"></i>
+                                <p>Database backup completed successfully. All attendance records are secure.</p>
+                            </div>
+                            <div class="message-meta">
+                                <span class="time">1 hour ago</span>
+                            </div>
+                        </div>
+                        <div class="message-author">
+                            <span>System Administrator • IT Department</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-indicators">
+                    <span class="indicator active"></span>
+                    <span class="indicator"></span>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Admin Information Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <i class="fas fa-user-shield"></i>
+                        <h3>Admin Information</h3>
+                    </div>
+                    <div class="info-list">
+                        <div class="info-item">
+                            <i class="fas fa-user"></i>
+                            <span class="label">Full Name:</span>
+                            <span class="value">System Administrator</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-id-badge"></i>
+                            <span class="label">Admin ID:</span>
+                            <span class="value">ADMIN001</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span class="label">Role:</span>
+                            <span class="value">Super Administrator</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span class="label">Email Address:</span>
+                            <span class="value">admin@university.edu</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-building"></i>
+                            <span class="label">Department:</span>
+                            <span class="value">IT Administration</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <span class="label">Last Login:</span>
+                            <span class="value">Today, 9:30 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="actions-card">
+                    <div class="card-header">
+                        <i class="fas fa-bolt"></i>
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="actions-grid">
+                        <div class="action-btn browse-subjects" onclick="document.getElementById('generateQR').click()">
+                            <i class="fas fa-qrcode"></i>
+                            <div class="action-content">
+                                <h4>Generate QR Code</h4>
+                                <p>Create attendance session</p>
+                            </div>
+                        </div>
+                        <div class="action-btn view-attendance">
+                            <i class="fas fa-users"></i>
+                            <div class="action-content">
+                                <h4>Manage Students</h4>
+                                <p>View all registered students</p>
+                            </div>
+                        </div>
+                        <div class="action-btn view-results" onclick="document.getElementById('refreshAttendance').click()">
+                            <i class="fas fa-chart-bar"></i>
+                            <div class="action-content">
+                                <h4>Attendance Reports</h4>
+                                <p>View detailed reports</p>
+                            </div>
+                        </div>
+                        <div class="action-btn leave-application">
+                            <i class="fas fa-cogs"></i>
+                            <div class="action-content">
+                                <h4>System Settings</h4>
+                                <p>Configure system options</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Generator Card -->
+                <div class="scanner-card">
+                    <div class="scanner-header">
+                        <span class="active-badge">QR GENERATOR</span>
+                        <button class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="scanner-content">
+                        <h3>QR Generator</h3>
+                        <p>Generate QR codes for attendance</p>
+                        
+                        <div class="scanner-area">
+                            <div class="scanner-frame" id="qrDisplay">
+                                <div class="corner top-left"></div>
+                                <div class="corner top-right"></div>
+                                <div class="corner bottom-left"></div>
+                                <div class="corner bottom-right"></div>
+                                <i class="fas fa-qrcode" style="font-size: 48px; color: rgba(255,255,255,0.3);"></i>
+                            </div>
+                        </div>
+                        
+                        <button class="scan-btn" id="generateQR">
+                            <i class="fas fa-plus"></i>
+                            <div class="btn-content">
+                                <span class="btn-title">Generate New QR</span>
+                                <span class="btn-subtitle">Create attendance session</span>
+                            </div>
+                        </button>
+                        
+                        <div class="scanner-info">
+                            <p><i class="fas fa-info-circle"></i> Click to generate new QR code</p>
+                            <p><i class="fas fa-share-alt"></i> Share with teachers and students</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students and Attendance Section -->
+            <div class="admin-grid">
+                <div class="card">
+                    <h2>Registered Students</h2>
+                    <div class="students-list">
+                        {% for student in students %}
+                        <div class="student-item">
+                            <strong>{{ student.name }}</strong>
+                            <span>ID: {{ student.student_id }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card full-width">
+                    <h2>Attendance Records</h2>
+                    <button id="refreshAttendance" class="btn-secondary">Refresh Records</button>
+                    <div id="attendanceList"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}?v=2"></script>
+</body>
+</html>
