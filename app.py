@@ -82,7 +82,7 @@ def login():
         user_type = request.form.get('user_type', 'student')
         
         conn = get_db_connection()
-        user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        user = execute_query(conn, 'SELECT * FROM users WHERE username = ?', (username,), fetch_one=True)
         conn.close()
         
         if user:
@@ -184,12 +184,12 @@ def index():
         return redirect(url_for('login'))
     
     conn = get_db_connection()
-    student = conn.execute('''
-        SELECT s.name, s.student_id, u.email 
+    student = execute_query(conn, '''
+        SELECT s.name, s.student_id, u.email, s.division, s.academic_year 
         FROM students s 
         JOIN users u ON s.user_id = u.id 
         WHERE s.user_id = ?
-    ''', (session['user_id'],)).fetchone()
+    ''', (session['user_id'],), fetch_one=True)
     
     conn.close()
     
@@ -199,7 +199,9 @@ def index():
     return render_template('student_dashboard.html', 
                          student_name=student['name'],
                          student_id=student['student_id'],
-                         student_email=student['email'])
+                         student_email=student['email'],
+                         student_division=student.get('division', 'Not Set'),
+                         student_year=student.get('academic_year', 'Not Set'))
 
 @app.route('/get_student_subjects')
 @login_required
@@ -207,12 +209,12 @@ def get_student_subjects():
     if session.get('role') != 'student':
         return jsonify({'success': False, 'message': 'Unauthorized'})
     
-    # For demo, assume student is in 1st Year, Section A
-    student_year = '1st Year'
-    student_division = 'Section A'
-    
     conn = get_db_connection()
-    subjects = execute_query(conn, 'SELECT * FROM subjects WHERE academic_year = ? AND division = ? ORDER BY name', (student_year, student_division), fetch_all=True)
+    # Get student's actual academic info
+    student = execute_query(conn, 'SELECT * FROM students WHERE user_id = ?', (session['user_id'],), fetch_one=True)
+    
+    # Get all subjects (remove hardcoded filtering for now)
+    subjects = execute_query(conn, 'SELECT * FROM subjects ORDER BY name', (), fetch_all=True)
     conn.close()
     
     subjects_data = []
@@ -235,13 +237,10 @@ def subjects():
     if session.get('role') != 'student':
         return redirect(url_for('login'))
     
-    # For demo, assume student is in 1st Year, Section A
-    student_year = '1st Year'
-    student_division = 'Section A'
-    
     conn = get_db_connection()
     student = execute_query(conn, 'SELECT * FROM students WHERE user_id = ?', (session['user_id'],), fetch_one=True)
-    subjects = execute_query(conn, 'SELECT * FROM subjects WHERE academic_year = ? AND division = ? ORDER BY name', (student_year, student_division), fetch_all=True)
+    # Get all subjects (remove hardcoded filtering)
+    subjects = execute_query(conn, 'SELECT * FROM subjects ORDER BY name', (), fetch_all=True)
     conn.close()
     
     return render_template('subjects.html', student=student, subjects=subjects)
@@ -325,10 +324,10 @@ def generate_qr():
         
         # Store session in database
         conn = get_db_connection()
-        conn.execute('''
+        execute_query(conn, '''
             INSERT INTO sessions (qr_data, subject, lecture_time, location, expiry_time, is_active) 
-            VALUES (?, ?, ?, ?, ?, 1)
-        ''', (qr_data, subject, class_start_time, class_end_time, expiry_time.strftime('%Y-%m-%d %H:%M:%S')))
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (qr_data, subject, class_start_time, class_end_time, expiry_time.strftime('%Y-%m-%d %H:%M:%S'), True))
         conn.commit()
         conn.close()
         
@@ -372,11 +371,12 @@ def mark_attendance():
         return jsonify({'success': False, 'message': 'Student not found'})
     
     # Check if session exists, is active, and not expired
-    session_record = conn.execute('''
+    db_params = get_db_params()
+    session_record = execute_query(conn, f'''
         SELECT id, subject, lecture_time, location, expiry_time 
         FROM sessions 
-        WHERE qr_data = ? AND is_active = 1 AND datetime('now') <= datetime(expiry_time)
-    ''', (session_id,)).fetchone()
+        WHERE qr_data = ? AND is_active = ? AND {db_params['now']} <= expiry_time
+    ''', (session_id, True), fetch_one=True)
     
     if not session_record:
         conn.close()

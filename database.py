@@ -63,10 +63,23 @@ def init_db():
             id {autoincrement},
             student_id TEXT UNIQUE NOT NULL,
             name TEXT NOT NULL,
+            division TEXT DEFAULT 'Section A',
+            academic_year TEXT DEFAULT '1st Year',
             user_id INTEGER,
             FOREIGN KEY (user_id) REFERENCES users (id)
         )
     ''')
+    
+    # Add division and academic_year columns if they don't exist
+    try:
+        cursor.execute("ALTER TABLE students ADD COLUMN division TEXT DEFAULT 'Section A'")
+    except:
+        pass
+    
+    try:
+        cursor.execute("ALTER TABLE students ADD COLUMN academic_year TEXT DEFAULT '1st Year'")
+    except:
+        pass
     
     # Teachers table
     cursor.execute(f'''
