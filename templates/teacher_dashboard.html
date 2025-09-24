@@ -803,6 +803,50 @@
             background: linear-gradient(135deg, var(--accent-orange) 0%, #F97316 100%);
         }
 
+        .delete-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #ff1744 0%, #d50000 100%);
+            border: 3px solid white;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(255, 23, 68, 0.6), 0 0 0 2px rgba(255, 23, 68, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .delete-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .delete-icon:hover::before {
+            left: 100%;
+        }
+
+        .delete-icon:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 6px 20px rgba(255, 82, 82, 0.6);
+        }
+
+        .delete-icon:active {
+            transform: scale(0.95);
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -1220,6 +1264,129 @@
             color: var(--gray-500);
         }
 
+        /* Custom Alert Modal */
+        .custom-alert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .alert-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .custom-alert.show .alert-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .alert-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .alert-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .alert-message {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .alert-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .alert-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 100px;
+        }
+
+        .alert-btn.cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .alert-btn.cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .alert-btn.confirm {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        .alert-btn.confirm:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
+            transform: translateY(-2px);
+        }
+
+        .confirm-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .confirm-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
 
     </style>
 </head>
@@ -1404,9 +1571,14 @@
                                             <p>{{ subject.description or 'No description' }}</p>
                                         </div>
                                     </div>
-                                    <div class="student-count">
-                                        <i class="fas fa-users"></i>
-                                        <span>35</span>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="student-count">
+                                            <i class="fas fa-users"></i>
+                                            <span>35</span>
+                                        </div>
+                                        <button class="delete-icon" onclick="deleteSubject({{ subject.id }}, '{{ subject.name }}')" title="Delete Subject">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1439,6 +1611,7 @@
                                     <i class="fas fa-file-alt"></i>
                                     Leave Applications
                                 </button>
+
                             </div>
                         </div>
                         {% endfor %}
@@ -1772,6 +1945,17 @@
             }
         `;
         document.head.appendChild(style);
+        
+        // Add shake animation
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
 
         // Modal Functions
         function openCreateSubjectModal() {
@@ -2050,24 +2234,9 @@
                     const successMessage = document.getElementById('successMessage');
                     successMessage.classList.add('show');
                     
-                    // Add new subject to the subjects grid
-                    addNewSubjectCard(
-                        subjectData.subjectName, 
-                        subjectData.description || 'New Subject', 
-                        subjectData.academicYear, 
-                        subjectData.division, 
-                        subjectData.subjectCode || 'NEW101'
-                    );
-                    
-                    // Update active subjects count
-                    const countElement = document.getElementById('activeSubjectsCount');
-                    const currentCount = parseInt(countElement.textContent);
-                    countElement.textContent = currentCount + 1;
-                    
-                    form.reset();
-                    
+                    // Reload the page to show the new subject with proper functionality
                     setTimeout(() => {
-                        closeCreateSubjectModal();
+                        window.location.reload();
                     }, 1500);
                 } else {
                     alert('Error: ' + data.message);
@@ -2127,15 +2296,15 @@
                     </div>
                 </div>
                 <div class="subject-actions">
-                    <button class="subject-btn qr">
+                    <button class="subject-btn qr" onclick="openQRModal('${name}', 'NEW_ID')">
                         <i class="fas fa-qrcode"></i>
                         Generate QR Code
                     </button>
-                    <button class="subject-btn attendance">
+                    <button class="subject-btn attendance" onclick="openAttendanceModal('NEW_ID', '${name}')">
                         <i class="fas fa-eye"></i>
                         View Attendance
                     </button>
-                    <button class="subject-btn leave">
+                    <button class="subject-btn leave" onclick="openSubjectLeaveModal('NEW_ID', '${name}')">
                         <i class="fas fa-file-alt"></i>
                         Leave Applications
                     </button>
@@ -2456,6 +2625,110 @@
                 csvTab.style.borderBottomColor = 'var(--secondary-blue)';
                 manualTab.style.borderBottomColor = 'transparent';
             }
+        }
+
+        // Custom alert functions
+        function showCustomAlert(title, message, showInput = false, onConfirm = null, onCancel = null) {
+            const alertHtml = `
+                <div class="custom-alert" id="customAlert">
+                    <div class="alert-content">
+                        <div class="alert-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="alert-title">${title}</div>
+                        <div class="alert-message">${message}</div>
+                        ${showInput ? '<input type="text" class="confirm-input" id="confirmInput" placeholder="Type YES to confirm">' : ''}
+                        <div class="alert-buttons">
+                            <button class="alert-btn cancel" onclick="closeCustomAlert()">Cancel</button>
+                            <button class="alert-btn confirm" onclick="confirmCustomAlert()">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', alertHtml);
+            setTimeout(() => document.getElementById('customAlert').classList.add('show'), 10);
+            
+            window.customAlertConfirm = onConfirm;
+            window.customAlertCancel = onCancel;
+        }
+
+        function closeCustomAlert() {
+            const alert = document.getElementById('customAlert');
+            if (alert) {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 150);
+            }
+            if (window.customAlertCancel) window.customAlertCancel();
+        }
+
+        function confirmCustomAlert() {
+            const input = document.getElementById('confirmInput');
+            if (input && input.value !== 'YES') {
+                input.style.borderColor = '#ff6b6b';
+                input.style.animation = 'shake 0.5s';
+                return;
+            }
+            closeCustomAlert();
+            if (window.customAlertConfirm) window.customAlertConfirm();
+        }
+
+        // Delete subject function with fast confirmation
+        function deleteSubject(subjectId, subjectName) {
+            showCustomAlert(
+                'Delete Subject',
+                `Are you sure you want to delete "${subjectName}"?`,
+                false,
+                () => {
+                    // Show loading immediately
+                    const alertContent = document.querySelector('.alert-content');
+                    alertContent.innerHTML = `
+                        <div class="alert-icon">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <div class="alert-title">Deleting...</div>
+                        <div class="alert-message">Please wait...</div>
+                    `;
+                    
+                    // Immediate delete request
+                    fetch('/delete_subject', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ subject_id: subjectId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Close alert and reload immediately
+                            closeCustomAlert();
+                            window.location.reload();
+                        } else {
+                            alertContent.innerHTML = `
+                                <div class="alert-icon">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <div class="alert-title">Error</div>
+                                <div class="alert-message">${data.message}</div>
+                                <div class="alert-buttons">
+                                    <button class="alert-btn confirm" onclick="closeCustomAlert()">OK</button>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(() => {
+                        alertContent.innerHTML = `
+                            <div class="alert-icon">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="alert-title">Error</div>
+                            <div class="alert-message">Failed to delete subject</div>
+                            <div class="alert-buttons">
+                                <button class="alert-btn confirm" onclick="closeCustomAlert()">OK</button>
+                            </div>
+                        `;
+                    });
+                }
+            );
         }
 
         // CSV upload function

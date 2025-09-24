@@ -496,6 +496,56 @@ def analytics():
                          total_students=total_students,
                          attendance_rate=round(attendance_rate, 1))
 
+@app.route('/delete_subject', methods=['POST'])
+@login_required
+def delete_subject():
+    if session.get('role') != 'teacher':
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+    
+    data = request.json
+    subject_id = data.get('subject_id')
+    
+    if not subject_id:
+        return jsonify({'success': False, 'message': 'Subject ID required'})
+    
+    conn = get_db_connection()
+    try:
+        # Verify the subject belongs to this teacher
+        subject = conn.execute('SELECT id FROM subjects WHERE id = ? AND teacher_id = ?', (subject_id, session['user_id'])).fetchone()
+        if not subject:
+            conn.close()
+            return jsonify({'success': False, 'message': 'Subject not found or access denied'})
+        
+        # Delete related data first (to maintain referential integrity)
+        # Delete attendance records for sessions of this subject
+        conn.execute('''
+            DELETE FROM attendance WHERE session_id IN (
+                SELECT s.id FROM sessions s 
+                JOIN subjects sub ON s.subject = sub.name 
+                WHERE sub.id = ?
+            )
+        ''', (subject_id,))
+        
+        # Delete sessions for this subject
+        conn.execute('''
+            DELETE FROM sessions WHERE subject IN (
+                SELECT name FROM subjects WHERE id = ?
+            )
+        ''', (subject_id,))
+        
+        # Delete results for this subject
+        conn.execute('DELETE FROM results WHERE subject_id = ?', (subject_id,))
+        
+        # Finally delete the subject
+        conn.execute('DELETE FROM subjects WHERE id = ? AND teacher_id = ?', (subject_id, session['user_id']))
+        
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'Subject deleted successfully'})
+    except Exception as e:
+        conn.close()
+        return jsonify({'success': False, 'message': 'Failed to delete subject'})
+
 @app.route('/create_subject', methods=['POST'])
 @login_required
 def create_subject():
@@ -517,13 +567,15 @@ def create_subject():
     
     conn = get_db_connection()
     try:
-        conn.execute('''
+        cursor = conn.cursor()
+        cursor.execute('''
             INSERT INTO subjects (name, code, academic_year, division, credits, description, semester, department, teacher_id, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
         ''', (subject_name, subject_code, academic_year, division, credits, description, semester, department, session['user_id']))
+        subject_id = cursor.lastrowid
         conn.commit()
         conn.close()
-        return jsonify({'success': True, 'message': 'Subject created successfully'})
+        return jsonify({'success': True, 'message': 'Subject created successfully', 'subject_id': subject_id})
     except Exception as e:
         conn.close()
         return jsonify({'success': False, 'message': 'Database error'})
