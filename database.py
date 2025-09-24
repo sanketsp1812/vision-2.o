@@ -1,9 +1,28 @@
-import sqlite3
+import os
 from werkzeug.security import generate_password_hash
 
 def init_db():
-    conn = sqlite3.connect('attendance.db')
-    cursor = conn.cursor()
+    database_url = os.getenv('DATABASE_URL', 'sqlite:///attendance.db')
+    
+    if database_url.startswith('postgresql'):
+        import psycopg2
+        from psycopg2.extras import RealDictCursor
+        conn = psycopg2.connect(database_url, cursor_factory=RealDictCursor)
+        cursor = conn.cursor()
+        
+        # PostgreSQL syntax
+        autoincrement = 'SERIAL PRIMARY KEY'
+        current_timestamp = 'TIMESTAMP DEFAULT NOW()'
+        datetime_now = 'NOW()'
+    else:
+        import sqlite3
+        conn = sqlite3.connect('attendance.db')
+        cursor = conn.cursor()
+        
+        # SQLite syntax
+        autoincrement = 'INTEGER PRIMARY KEY AUTOINCREMENT'
+        current_timestamp = 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
+        datetime_now = "datetime('now')"
     
     # Check if missing columns exist in sessions table, add if missing
     try:
@@ -27,21 +46,21 @@ def init_db():
         pass  # Column already exists
     
     # Users table for authentication
-    cursor.execute('''
+    cursor.execute(f'''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id {autoincrement},
             username TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
             role TEXT DEFAULT 'student',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at {current_timestamp}
         )
     ''')
     
     # Students table
-    cursor.execute('''
+    cursor.execute(f'''
         CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id {autoincrement},
             student_id TEXT UNIQUE NOT NULL,
             name TEXT NOT NULL,
             user_id INTEGER,
@@ -50,9 +69,9 @@ def init_db():
     ''')
     
     # Teachers table
-    cursor.execute('''
+    cursor.execute(f'''
         CREATE TABLE IF NOT EXISTS teachers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id {autoincrement},
             teacher_id TEXT UNIQUE NOT NULL,
             name TEXT NOT NULL,
             subject TEXT,
@@ -62,26 +81,26 @@ def init_db():
     ''')
     
     # Attendance sessions table
-    cursor.execute('''
+    cursor.execute(f'''
         CREATE TABLE IF NOT EXISTS sessions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id {autoincrement},
             qr_data TEXT UNIQUE NOT NULL,
             subject TEXT,
             lecture_time TEXT,
             location TEXT,
             expiry_time TIMESTAMP,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            is_active BOOLEAN DEFAULT 1
+            created_at {current_timestamp},
+            is_active BOOLEAN DEFAULT {'TRUE' if database_url.startswith('postgresql') else '1'}
         )
     ''')
     
     # Attendance records table
-    cursor.execute('''
+    cursor.execute(f'''
         CREATE TABLE IF NOT EXISTS attendance (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id {autoincrement},
             student_id TEXT NOT NULL,
             session_id INTEGER NOT NULL,
-            marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            marked_at {current_timestamp},
             FOREIGN KEY (session_id) REFERENCES sessions (id)
         )
     ''')

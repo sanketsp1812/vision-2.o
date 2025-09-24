@@ -5,22 +5,35 @@ import qrcode
 import io
 import base64
 from datetime import datetime
-import sqlite3
 import os
 import csv
+from dotenv import load_dotenv
 from database import init_db
+from db_helper import execute_query, get_db_params
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-in-production'
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max file size
+app.secret_key = os.getenv('SECRET_KEY', 'fallback-secret-key')
+app.config['MAX_CONTENT_LENGTH'] = int(os.getenv('MAX_CONTENT_LENGTH', 5242880))
 
 # Initialize database
 init_db()
 
 def get_db_connection():
-    conn = sqlite3.connect('attendance.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+    database_url = os.getenv('DATABASE_URL', 'sqlite:///attendance.db')
+    
+    if database_url.startswith('postgresql'):
+        import psycopg2
+        from psycopg2.extras import RealDictCursor
+        conn = psycopg2.connect(database_url, cursor_factory=RealDictCursor)
+        return conn
+    else:
+        import sqlite3
+        conn = sqlite3.connect('attendance.db')
+        conn.row_factory = sqlite3.Row
+        return conn
 
 def login_required(f):
     from functools import wraps
@@ -199,7 +212,7 @@ def get_student_subjects():
     student_division = 'Section A'
     
     conn = get_db_connection()
-    subjects = conn.execute('SELECT * FROM subjects WHERE academic_year = ? AND division = ? ORDER BY name', (student_year, student_division)).fetchall()
+    subjects = execute_query(conn, 'SELECT * FROM subjects WHERE academic_year = ? AND division = ? ORDER BY name', (student_year, student_division), fetch_all=True)
     conn.close()
     
     subjects_data = []
@@ -227,8 +240,8 @@ def subjects():
     student_division = 'Section A'
     
     conn = get_db_connection()
-    student = conn.execute('SELECT * FROM students WHERE user_id = ?', (session['user_id'],)).fetchone()
-    subjects = conn.execute('SELECT * FROM subjects WHERE academic_year = ? AND division = ? ORDER BY name', (student_year, student_division)).fetchall()
+    student = execute_query(conn, 'SELECT * FROM students WHERE user_id = ?', (session['user_id'],), fetch_one=True)
+    subjects = execute_query(conn, 'SELECT * FROM subjects WHERE academic_year = ? AND division = ? ORDER BY name', (student_year, student_division), fetch_all=True)
     conn.close()
     
     return render_template('subjects.html', student=student, subjects=subjects)
